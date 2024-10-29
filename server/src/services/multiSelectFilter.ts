@@ -1,5 +1,5 @@
 import type { Core } from '@strapi/strapi';
-import { GetItemsByTagResult, MultiSelectItem, MultiSelectItemCreateRequest, MultiSelectItemId, PluginQueryResponse, PluginSettingsResponse } from '../../../typings';
+import { DocumentResponse, GetDocumentsByTagResult, GetItemsByTagResult, MultiSelectItem, MultiSelectItemCreateRequest, MultiSelectItemId, OrderedDocumentResponse, PluginQueryResponse, PluginSettingsResponse } from '../../../typings';
 
 type Settings = {
   mainField: string;
@@ -21,6 +21,92 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     return {
       body: 'Welcome to Strapi 🚀'
     };
+  },
+
+  async getDocumentsGroupedByTag() {
+    const pluginId = "plugin::multi-select-filter.multiselect";
+
+    let res: GetDocumentsByTagResult = {
+      result: [],
+      errorMessage: "",
+    };
+
+    try {
+      const multiSelects = (await strapi.documents(pluginId).findMany({
+        fields: ['tag', 'ref_entity_id', 'ref_published', 'order', 'ref_uid'],
+      })) as any as MultiSelectItem[];
+
+      //map MultiSelectItems by ref_uid (i.e. by api::article.article, api::author.author etc.)
+      const multiSelectMap = new Map<string, MultiSelectItem[]>();
+      multiSelects.forEach(x => {
+        if (multiSelectMap.has(x.ref_uid)) {
+          const mapItem = multiSelectMap.get(x.ref_uid);
+          mapItem.push(x);
+          multiSelectMap.set(x.ref_uid, mapItem);
+        }
+        else {
+          multiSelectMap.set(x.ref_uid, [x]);
+        }
+      });
+
+      for (const key of multiSelectMap.keys()) {
+        const uid = key;
+
+        const multiSelectsByEntityId = multiSelectMap.get(key);
+        const refPublishedEntityIds = multiSelectsByEntityId.filter(x => x.ref_published).map(x => x.ref_entity_id);
+        const refNotPublishedEntityIds = multiSelectsByEntityId.filter(x => !x.ref_published).map(x => x.ref_entity_id);
+
+        let refPublishedEntities: DocumentResponse[] = [];
+        if (refPublishedEntityIds.length > 0)
+          refPublishedEntities = (await strapi.db.query(uid)
+            .findMany({
+              filters: {
+                $and: [
+                  { documentId: { $in: refPublishedEntityIds } },
+                  { published_at: { $notNull: true } },
+                ]
+              },
+              select: ['id', 'documentId'],
+            }));
+
+        let refNotPublishedEntities: DocumentResponse[] = [];
+        if (refNotPublishedEntityIds.length > 0)
+          refNotPublishedEntities = (await strapi.db.query(uid)
+            .findMany({
+              filters: {
+                $and: [
+                  { documentId: { $in: refNotPublishedEntityIds } },
+                  { published_at: { $null: true } },
+                ]
+              },
+              select: ['id', 'documentId'],
+            }));
+
+        let documents: OrderedDocumentResponse[] = [];
+        multiSelectsByEntityId.forEach(x => {
+          if (x.ref_published) {
+            const entity = refPublishedEntities.find(y => y.documentId === x.ref_entity_id);
+            if (entity)
+              documents.push({ ...entity, order: x.order, tag: x.tag })
+          } else {
+            const entity = refNotPublishedEntities.find(y => y.documentId === x.ref_entity_id);
+            if (entity)
+              documents.push({ ...entity, order: x.order, tag: x.tag })
+          }
+        })
+        res.result.push({
+          uid,
+          items: documents,
+        })
+      }
+    }
+    catch (error) {
+      console.error(error);
+
+      res.result = [];
+      res.errorMessage = error;
+    }
+    return res;
   },
 
   async getFilteredItems(uid, filter: string, publishedOnly: boolean, queryStart?: number, queryLimit?: number) {

@@ -50,6 +50,13 @@ export interface MultiSelectItem {
     title?: string;
 }
 
+export interface MultiSelectDocumentItem {
+    id: number;
+    documentId: string;
+    tag: string;
+    order: number;
+}
+
 export interface MultiSelectItemId {
     id: number;
     documentId: string;
@@ -69,5 +76,20 @@ export interface MultiSelectCreateRequestBody {
 
 export interface GetItemsByTagResult {
     result: MultiSelectItem[];
+    errorMessage: string;
+}
+
+export interface OrderedDocumentResponse {
+    id: number;
+    documentId: string;
+    order: number;
+    tag: string;
+}
+
+export interface GetDocumentsByTagResult {
+    result: {
+        uid: string;
+        items: OrderedDocumentResponse[];
+    }[];
     errorMessage: string;
 }

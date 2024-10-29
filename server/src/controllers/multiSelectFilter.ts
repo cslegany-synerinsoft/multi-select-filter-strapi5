@@ -50,6 +50,14 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     const filteredItems = await multiSelectFilter.updateByTag(body.tag, body.data);
     ctx.type = 'application/json; charset=utf-8';
     ctx.send(filteredItems);
-  }
+  },
+
+  async documentsGroupedByTag(ctx) {
+    const multiSelectFilter = strapi.plugin("multi-select-filter").service("multiSelectFilter");
+
+    const items = await multiSelectFilter.getDocumentsGroupedByTag();
+      ctx.type = 'application/json; charset=utf-8';
+      ctx.send(items);
+  },
 
 });

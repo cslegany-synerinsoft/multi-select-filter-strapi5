@@ -41,5 +41,14 @@ export default {
         auth: false,
       },
     },
+    {
+      method: 'GET',
+      path: '/documents',
+      handler: 'multiSelectFilter.documentsGroupedByTag',
+      config: {
+        policies: [],
+        auth: false,
+      },
+    },
   ]
 }

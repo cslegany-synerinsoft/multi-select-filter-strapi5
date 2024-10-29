@@ -101,7 +101,7 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 		if (!documentId || !tag)
 			return;
 
-		const alreadyContains = multiSelectItems.find(x => x.ref_entity_id == documentId);
+		const alreadyContains = multiSelectItems.find(x => x.ref_entity_id === documentId);
 		if (alreadyContains) {
 			toggleNotification({
 				type: 'info',
