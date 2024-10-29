@@ -159,39 +159,39 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
         const refPublishedEntityIds = multiSelectsByEntityId.filter(x => x.ref_published).map(x => x.ref_entity_id);
         const refNotPublishedEntityIds = multiSelectsByEntityId.filter(x => !x.ref_published).map(x => x.ref_entity_id);
 
-        let refPublishedEntities: { id: number }[] = [];
+        let refPublishedEntities: { documentId: string }[] = [];
         if (refPublishedEntityIds.length > 0)
           refPublishedEntities = (await strapi.db.query(uid)
             .findMany({
               filters: {
                 $and: [
-                  { id: { $in: refPublishedEntityIds } },
+                  { documentId: { $in: refPublishedEntityIds } },
                   { published_at: { $notNull: true } },
                 ]
               },
-              select: ['id', mainField],
+              select: ['id', 'documentId', mainField],
             }));
 
-        let refNotPublishedEntities: { id: number }[] = [];
+        let refNotPublishedEntities: { documentId: string }[] = [];
         if (refNotPublishedEntityIds.length > 0)
           refNotPublishedEntities = (await strapi.db.query(uid)
             .findMany({
               filters: {
                 $and: [
-                  { id: { $in: refNotPublishedEntityIds } },
+                  { documentId: { $in: refNotPublishedEntityIds } },
                   { published_at: { $null: true } },
                 ]
               },
-              select: ['id', mainField],
+              select: ['id', 'documentId', mainField],
             }));
 
         multiSelectsByEntityId.forEach(x => {
           if (x.ref_published) {
-            const entity = refPublishedEntities.find(y => y.id === x.ref_entity_id);
+            const entity = refPublishedEntities.find(y => y.documentId === x.ref_entity_id);
             if (entity)
               x.title = entity[mainField];
           } else {
-            const entity = refNotPublishedEntities.find(y => y.id === x.ref_entity_id);
+            const entity = refNotPublishedEntities.find(y => y.documentId === x.ref_entity_id);
             if (entity)
               x.title = entity[mainField];
           }

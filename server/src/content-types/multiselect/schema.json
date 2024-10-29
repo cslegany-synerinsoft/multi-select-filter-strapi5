@@ -25,7 +25,7 @@
       "required": true
     },
     "ref_entity_id": {
-      "type": "integer",
+      "type": "string",
       "required": true
     },
     "order": {

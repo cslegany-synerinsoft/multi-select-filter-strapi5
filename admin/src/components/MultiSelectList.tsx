@@ -97,11 +97,11 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 		return requestList;
 	}
 
-	const onDocumentSelected = async (id: number) => {
-		if (!id || !tag)
+	const onDocumentSelected = async (documentId: string) => {
+		if (!documentId || !tag)
 			return;
 
-		const alreadyContains = multiSelectItems.find(x => x.ref_entity_id == id);
+		const alreadyContains = multiSelectItems.find(x => x.ref_entity_id == documentId);
 		if (alreadyContains) {
 			toggleNotification({
 				type: 'info',
@@ -118,7 +118,7 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 			order: multiSelectItems.length + 1,
 			ref_uid: entityUid,
 			ref_published: publishedOnly,
-			ref_entity_id: id,
+			ref_entity_id: documentId,
 		});
 
 		await onUpdateMultiSelectItems(requestList);
@@ -186,11 +186,11 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 					queryResponse.result.length > 0 && (
 						<Box style={{ width: '100%' }} paddingTop={2}>
 							<SingleSelect onReachEnd={onSelectReachEnd}
-								onChange={(e: number) => onDocumentSelected(e)}
+								onChange={(e: string) => onDocumentSelected(e)}
 								placeholder="Select an item...">
 								{queryResponse.result.map((item) => {
 									return (
-										<SingleSelectOption key={item.id} value={item.id}>
+										<SingleSelectOption key={item.documentId} value={item.documentId}>
 											{getComboboxDisplayValue(item, queryResponse.mainField)}
 										</SingleSelectOption>
 									);

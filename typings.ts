@@ -44,7 +44,7 @@ export interface MultiSelectItem {
     documentId: string;
     tag: string;
     ref_uid: string;
-    ref_entity_id: number;
+    ref_entity_id: string;
     ref_published: boolean;
     order: number,
     title?: string;
@@ -57,7 +57,7 @@ export interface MultiSelectItemId {
 
 export interface MultiSelectItemCreateRequest {
     ref_uid: string;
-    ref_entity_id: number;
+    ref_entity_id: string;
     ref_published: boolean;
     order: number,
 }
