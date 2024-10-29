@@ -10,6 +10,11 @@
     "draftAndPublish": false,
     "comment": ""
   },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    }
+  },
   "attributes": {
     "tag": {
       "type": "string",
@@ -20,11 +25,11 @@
       "required": true
     },
     "ref_entity_id": {
-      "type": "number",
+      "type": "integer",
       "required": true
     },
     "order": {
-      "type": "number",
+      "type": "integer",
       "required": true
     },
     "ref_published": {

@@ -52,7 +52,6 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       const total = await strapi.documents(uid).count({
         filters,
         status: publishedOnly ? 'published' : undefined,
-        sort: sort as any,
       });
 
       const result: any[] = await strapi.documents(uid).findMany(
