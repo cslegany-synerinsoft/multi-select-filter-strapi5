@@ -88,7 +88,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     const pluginId = "plugin::multi-select-filter.multiselect";
 
     const multiSelectsToDelete = (await strapi.documents(pluginId).findMany({
-      fields: ['id'],
+      fields: ['id', 'documentId'],
       filters: {
         tag: {
           $eq: tag
@@ -102,7 +102,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
       })
     })
 
-    request.forEach(async (x, index) => {
+    await Promise.all(request.map(async (x) => {
       await strapi.documents(pluginId).create({
         data: {
           tag,
@@ -112,7 +112,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
           order: x.order,
         }
       })
-    })
+    }));
   },
 
   async getItemsByTag(tag: string) {
