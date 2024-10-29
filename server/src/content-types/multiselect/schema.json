@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "multiselect",
+  "info": {
+    "singularName": "multiselect",
+    "pluralName": "multiselects",
+    "displayName": "Multi Select Items"
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": ""
+  },
+  "attributes": {
+    "tag": {
+      "type": "string",
+      "required": true
+    },
+    "ref_uid": {
+      "type": "string",
+      "required": true
+    },
+    "ref_entity_id": {
+      "type": "number",
+      "required": true
+    },
+    "order": {
+      "type": "number",
+      "required": true
+    },
+    "ref_published": {
+      "type": "boolean",
+      "required": true
+    }
+  }
+}
