@@ -136,7 +136,6 @@ export default ({ strapi }: { strapi: strapi.Core.Strapi }) => ({
       const total = await strapi.documents("api::article.article").count({
         filters,
         status: publishedOnly ? 'published' : undefined,
-        sort: sort as any,
       });
 
       const documents = await strapi.documents("api::article.article").findMany({
