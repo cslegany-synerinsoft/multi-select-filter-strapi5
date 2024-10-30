@@ -34,6 +34,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     try {
       const multiSelects = (await strapi.documents(pluginId).findMany({
         fields: ['tag', 'ref_entity_id', 'ref_published', 'order', 'ref_uid'],
+        status: 'published',
       })) as any as MultiSelectItem[];
 
       //map MultiSelectItems by ref_uid (i.e. by api::article.article, api::author.author etc.)
@@ -170,23 +171,67 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     return res;
   },
 
-  async updateByTag(tag: string, request: MultiSelectItemCreateRequest[]) {
+  async publishByTag(tag: string) {
     const pluginId = "plugin::multi-select-filter.multiselect";
 
+    //delete existing published items
     const multiSelectsToDelete = (await strapi.documents(pluginId).findMany({
       fields: ['id', 'documentId'],
       filters: {
-        tag: {
-          $eq: tag
+        tag: { $eq: tag },
+      },
+      status: 'published',
+    })) as any as MultiSelectItemId[];
+
+    await Promise.all(multiSelectsToDelete.map(async (x) => {
+      await strapi.documents(pluginId).delete({
+        documentId: x.documentId,
+        filters: {
+          publishedAt: { $notNull: true },
         }
+      })
+    }))
+
+    //publish not published items
+    const multiSelectsToPublish = (await strapi.documents(pluginId).findMany({
+      fields: ['id', 'documentId'],
+      filters: {
+        $and: [
+          { tag: { $eq: tag } },
+          { publishedAt: { $null: true } },
+        ]
       },
     })) as any as MultiSelectItemId[];
 
-    multiSelectsToDelete.forEach(x => {
-      strapi.documents(pluginId).delete({
+    await Promise.all(multiSelectsToPublish.map(async (x) => {
+      await strapi.documents(pluginId).publish({
         documentId: x.documentId,
       })
-    })
+    }))
+  },
+
+  async updateByTag(tag: string, request: MultiSelectItemCreateRequest[]) {
+    const pluginId = "plugin::multi-select-filter.multiselect";
+
+    //only delete not published items when updating data because you'd always update your draft
+    const multiSelectsToDelete = (await strapi.documents(pluginId).findMany({
+      fields: ['id', 'documentId'],
+      filters: {
+        $and: [
+          { tag: { $eq: tag } },
+          { publishedAt: { $null: true } },
+        ]
+      },
+    })) as any as MultiSelectItemId[];
+
+    await Promise.all(multiSelectsToDelete.map(async (x) => {
+      await strapi.documents(pluginId).delete({
+        documentId: x.documentId,
+        filters: {
+          publishedAt: { $null: true },
+        }
+      })
+    }))
 
     await Promise.all(request.map(async (x) => {
       await strapi.documents(pluginId).create({
@@ -196,7 +241,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
           ref_entity_id: x.ref_entity_id,
           ref_published: x.ref_published,
           order: x.order,
-        }
+        },
+        status: 'draft',
       })
     }));
   },
@@ -219,7 +265,8 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
             $eq: tag
           }
         },
-        sort: `order:asc`
+        sort: `order:asc`,
+        status: 'draft',
       })) as any as MultiSelectItem[];
 
       //map MultiSelectItems by ref_uid (i.e. by api::article.article, api::author.author etc.)
@@ -252,7 +299,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
               filters: {
                 $and: [
                   { documentId: { $in: refPublishedEntityIds } },
-                  { published_at: { $notNull: true } },
+                  { publishedAt: { $notNull: true } },
                 ]
               },
               select: ['id', 'documentId', mainField],
@@ -265,7 +312,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
               filters: {
                 $and: [
                   { documentId: { $in: refNotPublishedEntityIds } },
-                  { published_at: { $null: true } },
+                  { publishedAt: { $null: true } },
                 ]
               },
               select: ['id', 'documentId', mainField],

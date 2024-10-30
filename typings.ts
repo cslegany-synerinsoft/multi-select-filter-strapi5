@@ -74,6 +74,10 @@ export interface MultiSelectCreateRequestBody {
     data: MultiSelectItemCreateRequest[];
 }
 
+export interface MultiSelectPublishRequestBody {
+    tag: string;
+}
+
 export interface GetItemsByTagResult {
     result: MultiSelectItem[];
     errorMessage: string;

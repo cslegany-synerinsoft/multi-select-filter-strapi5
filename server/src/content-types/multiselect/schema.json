@@ -7,7 +7,7 @@
     "displayName": "Multi Select Items"
   },
   "options": {
-    "draftAndPublish": false,
+    "draftAndPublish": true,
     "comment": ""
   },
   "pluginOptions": {

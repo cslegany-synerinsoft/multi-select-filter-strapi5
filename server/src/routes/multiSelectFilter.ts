@@ -42,6 +42,15 @@ export default {
       },
     },
     {
+      method: 'POST',
+      path: '/publish',
+      handler: 'multiSelectFilter.publishByTag',
+      config: {
+        policies: [],
+        auth: false,
+      },
+    },
+    {
       method: 'GET',
       path: '/documents',
       handler: 'multiSelectFilter.documentsGroupedByTag',

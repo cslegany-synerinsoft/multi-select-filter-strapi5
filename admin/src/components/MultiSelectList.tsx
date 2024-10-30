@@ -6,7 +6,7 @@ import {
 	TextInput,
 	Field,
 } from "@strapi/design-system";
-import { Information, Trash } from "@strapi/icons";
+import { CloudUpload, Information, Trash } from "@strapi/icons";
 import { useIntl } from "react-intl";
 import { getTranslation as getTrad } from '../utils/getTranslation';
 import TooltipIconButton from "./TooltipIconButton";
@@ -82,6 +82,29 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 		setMultiSelectItems(sortedResult);
 
 		setIsLoading(false);
+	}
+
+
+	const onPublishMultiSelectItems = async () => {
+		setIsLoading(true);
+
+		const requestData = {
+			tag,
+		};
+		await post<PluginQueryResponse>(`/multi-select-filter/publish`, requestData);
+		const { data } = await get<GetItemsByTagResult>(`/multi-select-filter/items/${tag}`);
+		const sortedResult = data.result.sort(x => x.order);
+		setMultiSelectItems(sortedResult);
+
+		setIsLoading(false);
+
+		toggleNotification({
+			type: "success",
+			message: formatMessage({
+				id: 'plugin.list.notification.published',
+				defaultMessage: 'Item list has been published',
+			}),
+		});
 	}
 
 	const convertMultiSelectItems = (multiSelectItems: MultiSelectItem[]) => {
@@ -176,9 +199,15 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 								showBorder={true} variant='ghost'>
 								<Trash />
 							</TooltipIconButton>
-							<TooltipIconButton label={formatMessage({ id: getTrad("plugin.dropdown.info.tooltip") })} showBorder={true} variant='ghost'>
+							{/* <TooltipIconButton label={formatMessage({ id: getTrad("plugin.dropdown.info.tooltip") })} showBorder={true} variant='ghost'>
 								<Information />
-							</TooltipIconButton>
+							</TooltipIconButton> */}
+							<Box paddingLeft={2}>
+								<TooltipIconButton onClick={onPublishMultiSelectItems} label={formatMessage({ id: getTrad("plugin.dropdown.buttons.publish") })}
+									showBorder={true} variant="secondary">
+									<CloudUpload />
+								</TooltipIconButton>
+							</Box>
 						</Flex>
 					</Box>
 				</Flex>

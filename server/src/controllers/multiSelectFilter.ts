@@ -1,5 +1,5 @@
 import type { Core } from '@strapi/strapi';
-import { MultiSelectCreateRequestBody, PluginQueryRequestBody } from '../../../typings';
+import { MultiSelectCreateRequestBody, MultiSelectPublishRequestBody, PluginQueryRequestBody } from '../../../typings';
 
 export default ({ strapi }: { strapi: Core.Strapi }) => ({
 
@@ -47,9 +47,21 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }
 
     const multiSelectFilter = strapi.plugin("multi-select-filter").service("multiSelectFilter");
-    const filteredItems = await multiSelectFilter.updateByTag(body.tag, body.data);
+    const res = await multiSelectFilter.updateByTag(body.tag, body.data);
     ctx.type = 'application/json; charset=utf-8';
-    ctx.send(filteredItems);
+    ctx.send(res);
+  },
+
+  async publishByTag(ctx) {
+    const body: MultiSelectPublishRequestBody = ctx.request.body;
+    if(!body.tag) {
+      ctx.throw(400, 'tag is required');
+    }
+
+    const multiSelectFilter = strapi.plugin("multi-select-filter").service("multiSelectFilter");
+    const res = await multiSelectFilter.publishByTag(body.tag);
+    ctx.type = 'application/json; charset=utf-8';
+    ctx.send(res);
   },
 
   async documentsGroupedByTag(ctx) {
