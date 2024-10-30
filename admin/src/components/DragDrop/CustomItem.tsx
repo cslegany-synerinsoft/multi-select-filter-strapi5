@@ -40,12 +40,14 @@ const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
 					<Box paddingBottom={2} paddingTop={2} width={'100%'}>
 						<Flex justifyContent="space-between">
 							<Flex>
-								<Drag />
+								<Box>
+									<Drag />
+								</Box>
 								<Typography>
 									{item.title}
 								</Typography>
 							</Flex>
-							<Box paddingRight={1}>
+							<Box paddingRight={1} paddingLeft={2}>
 								<IconButton withTooltip={false} variant="secondary" onClick={() => onRemoveItem(item)}>
 									<Trash />
 								</IconButton>
