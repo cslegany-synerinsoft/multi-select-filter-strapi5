@@ -1,6 +1,6 @@
 {
   "name": "@cslegany/multi-select-filter-strapi5",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "A customizable Multi-Select Filter to replace the default one.",
   "strapi": {
     "kind": "plugin",

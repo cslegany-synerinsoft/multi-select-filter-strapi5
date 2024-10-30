@@ -38,6 +38,7 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 
 	const [isLoading, setIsLoading] = useState(true);
 	const [multiSelectItems, setMultiSelectItems] = useState<MultiSelectItem[]>([]);
+	const [isPublishEnabled, setIsPublishEnabled] = useState<boolean>(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -82,6 +83,7 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 		setMultiSelectItems(sortedResult);
 
 		setIsLoading(false);
+		setIsPublishEnabled(true);
 	}
 
 
@@ -97,12 +99,15 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 		setMultiSelectItems(sortedResult);
 
 		setIsLoading(false);
+		setIsPublishEnabled(false);
 
 		toggleNotification({
 			type: "success",
 			message: formatMessage({
-				id: 'plugin.list.notification.published',
+				id: getTrad('plugin.list.notification.published'),
 				defaultMessage: 'Item list has been published',
+			}, {
+				"itemList": displayName,
 			}),
 		});
 	}
@@ -129,8 +134,10 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 			toggleNotification({
 				type: 'info',
 				message: formatMessage({
-					id: 'plugin.list.notification.alreadyContains',
+					id: getTrad('plugin.list.notification.alreadyContains'),
 					defaultMessage: 'Selected item has already been added to the list',
+				}, {
+					"itemList": displayName,
 				}),
 			});
 			return;
@@ -204,7 +211,7 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 							</TooltipIconButton> */}
 							<Box paddingLeft={2}>
 								<TooltipIconButton onClick={onPublishMultiSelectItems} label={formatMessage({ id: getTrad("plugin.dropdown.buttons.publish") })}
-									showBorder={true} variant="secondary">
+									showBorder={true} variant="secondary" disabled={!isPublishEnabled}>
 									<CloudUpload />
 								</TooltipIconButton>
 							</Box>
