@@ -97,3 +97,10 @@ export interface GetDocumentsByTagResult {
     }[];
     errorMessage: string;
 }
+
+export interface HighlightSettings {
+    id: number;
+    documentId: string;
+    publishedAt: string;
+    name: string;
+}

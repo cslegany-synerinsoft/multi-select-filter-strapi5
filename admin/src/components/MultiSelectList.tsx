@@ -16,6 +16,8 @@ import { SortEndParams } from "./DragDrop/typings";
 import { useEffect, useRef, useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useFetchClient, useNotification } from "@strapi/strapi/admin";
+import { unstable_useContentManagerContext as useContentManagerContext } from '@strapi/strapi/admin';
+import moment from "moment";
 
 interface MultiSelectListProps {
 	displayName?: string;
@@ -27,10 +29,11 @@ interface MultiSelectListProps {
 	onSelectReachEnd: () => void;
 	publishedOnly: boolean;
 	entityUid: string;
+	disabled: boolean;
 }
 
 const MultiSelectList = (props: MultiSelectListProps) => {
-	const { displayName, customFieldName, tag, queryResponse, filter, setFilter, onSelectReachEnd, publishedOnly, entityUid } = props;
+	const { displayName, customFieldName, tag, queryResponse, filter, setFilter, onSelectReachEnd, publishedOnly, entityUid, disabled } = props;
 
 	const { get, post } = useFetchClient();
 	const { toggleNotification } = useNotification();
@@ -38,13 +41,16 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 
 	const [isLoading, setIsLoading] = useState(true);
 	const [multiSelectItems, setMultiSelectItems] = useState<MultiSelectItem[]>([]);
-	const [isPublishEnabled, setIsPublishEnabled] = useState<boolean>(false);
+
+	const { form } = useContentManagerContext();
+	const { initialValues, values, onChange } = form;
 
 	useEffect(() => {
 		const fetchData = async () => {
 			setIsLoading(true);
 
-			const { data } = await get<GetItemsByTagResult>(`/multi-select-filter/items/${tag}`);
+			const status = disabled ? 'published' : 'draft';
+			const { data } = await get<GetItemsByTagResult>(`/multi-select-filter/items/${tag}/${status}`);
 			const sortedResult = data.result.sort(x => x.order);
 			setMultiSelectItems(sortedResult);
 
@@ -78,38 +84,14 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 			data: itemRequest,
 		};
 		await post<PluginQueryResponse>(`/multi-select-filter/update`, requestData);
-		const { data } = await get<GetItemsByTagResult>(`/multi-select-filter/items/${tag}`);
+		const status = disabled ? 'published' : 'draft';
+		const { data } = await get<GetItemsByTagResult>(`/multi-select-filter/items/${tag}/${status}`);
 		const sortedResult = data.result.sort(x => x.order);
 		setMultiSelectItems(sortedResult);
 
 		setIsLoading(false);
-		setIsPublishEnabled(true);
-	}
 
-
-	const onPublishMultiSelectItems = async () => {
-		setIsLoading(true);
-
-		const requestData = {
-			tag,
-		};
-		await post<PluginQueryResponse>(`/multi-select-filter/publish`, requestData);
-		const { data } = await get<GetItemsByTagResult>(`/multi-select-filter/items/${tag}`);
-		const sortedResult = data.result.sort(x => x.order);
-		setMultiSelectItems(sortedResult);
-
-		setIsLoading(false);
-		setIsPublishEnabled(false);
-
-		toggleNotification({
-			type: "success",
-			message: formatMessage({
-				id: getTrad('plugin.list.notification.published'),
-				defaultMessage: 'Item list has been published',
-			}, {
-				"itemList": displayName,
-			}),
-		});
+		onChange('featured_news_info', `Last update: ${moment().format('YYYY-MM-DD HH:mm:ss')}`);
 	}
 
 	const convertMultiSelectItems = (multiSelectItems: MultiSelectItem[]) => {
@@ -197,22 +179,19 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 							placeholder={"Filter items"}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilter(e.target.value)}
 							value={filter}
+							disabled={disabled}
 						/>
 					</Box>
 					<Box marginLeft={2}>
 						<Flex>
-							<TooltipIconButton disabled={filter === ""} onClick={onClearFilter}
+							<TooltipIconButton disabled={filter === "" || disabled} onClick={onClearFilter}
 								label={formatMessage({ id: getTrad("plugin.dropdown.buttons.clear") })}
 								showBorder={true} variant='ghost'>
 								<Trash />
 							</TooltipIconButton>
-							{/* <TooltipIconButton label={formatMessage({ id: getTrad("plugin.dropdown.info.tooltip") })} showBorder={true} variant='ghost'>
-								<Information />
-							</TooltipIconButton> */}
 							<Box paddingLeft={2}>
-								<TooltipIconButton onClick={onPublishMultiSelectItems} label={formatMessage({ id: getTrad("plugin.dropdown.buttons.publish") })}
-									showBorder={true} variant="secondary" disabled={!isPublishEnabled}>
-									<CloudUpload />
+								<TooltipIconButton label={formatMessage({ id: getTrad("plugin.dropdown.info.tooltip") })} showBorder={true} variant='ghost'>
+									<Information />
 								</TooltipIconButton>
 							</Box>
 						</Flex>
@@ -221,7 +200,7 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 				{
 					queryResponse.result.length > 0 && (
 						<Box style={{ width: '100%' }} paddingTop={2}>
-							<SingleSelect onReachEnd={onSelectReachEnd}
+							<SingleSelect onReachEnd={onSelectReachEnd} disabled={disabled}
 								onChange={(e: string) => onDocumentSelected(e)}
 								placeholder="Select an item...">
 								{queryResponse.result.map((item) => {
@@ -240,7 +219,7 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 			</Field.Root>
 
 			<Box paddingTop={4}>
-				<SortableList data={multiSelectItems} onSortEnd={onSortEnd} onRemoveItem={onRemoveItem}></SortableList>
+				<SortableList data={multiSelectItems} onSortEnd={onSortEnd} onRemoveItem={onRemoveItem} disabled={disabled}></SortableList>
 			</Box>
 		</>
 	)

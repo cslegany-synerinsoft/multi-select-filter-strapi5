@@ -6,6 +6,7 @@ import { MultiSelectItem } from "../../../../typings"
 
 type SortableListItemProps = {
 	item: MultiSelectItem;
+	disabled: boolean;
 	onRemoveItem: (item: MultiSelectItem) => void;
 } & HTMLAttributes<HTMLDivElement>
 

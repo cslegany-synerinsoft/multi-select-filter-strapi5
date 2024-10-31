@@ -22,9 +22,10 @@ interface SortableListProps {
 	data: MultiSelectItem[];
 	onSortEnd: (item: SortEndParams) => void;
 	onRemoveItem: (item: MultiSelectItem) => void;
+	disabled: boolean;
 };
 
-const SortableList = ({ data, onSortEnd, onRemoveItem }: SortableListProps) => {
+const SortableList = ({ data, onSortEnd, onRemoveItem, disabled }: SortableListProps) => {
 	const defaultItems = data;
 	const [items, setItems] = useState<MultiSelectItem[]>(defaultItems);
 	if (items.length !== defaultItems.length)
@@ -90,9 +91,9 @@ const SortableList = ({ data, onSortEnd, onRemoveItem }: SortableListProps) => {
 				onDragEnd={handleDragEnd}
 				onDragCancel={handleDragCancel}
 			>
-				<SortableContext items={items}>
+				<SortableContext items={items} disabled={disabled}>
 					{items.map((item) => (
-						<SortableListItem key={item.id} item={item} onRemoveItem={onRemoveItem} />
+						<SortableListItem key={item.id} item={item} disabled={disabled} onRemoveItem={onRemoveItem} />
 					))}
 				</SortableContext>
 			</DndContext>

@@ -28,8 +28,5 @@
 	"plugin.custom-field.advanced.apiEndpoint.description": "Api Endpoint to load data for Multi Select Dropdown",
 	"plugin.custom-field.advanced.apiEndpoint.placeholder": "Api Endpoint Name",
 	"plugin.custom-field.advanced.publishedOnly.label": "Show only Published Items",
-	"plugin.custom-field.advanced.publishedOnly.description": "Show only published items in the Multi Select Dropdown",
-	"plugin.custom-field.advanced.tag.label": "Tag",
-	"plugin.custom-field.advanced.tag.description": "Tag associated with the Multi Select Dropdown. Required Field",
-	"plugin.custom-field.advanced.tag.placeholder": "A tag like LEFT_ARTICLES"
+	"plugin.custom-field.advanced.publishedOnly.description": "Show only published items in the Multi Select Dropdown"
 }

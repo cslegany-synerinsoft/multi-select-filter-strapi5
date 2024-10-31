@@ -8,7 +8,6 @@ interface MultiSelectFilterManagerOptions {
 	apiEndpoint?: string;
 	publishedOnly?: boolean;
 	queryLimit?: number;
-	tag?: string;
 }
 
 interface MultiSelectFilterManagerProps {
@@ -18,10 +17,11 @@ interface MultiSelectFilterManagerProps {
 		options?: MultiSelectFilterManagerOptions;
 	},
 	label: string;
+	name: string;
 }
 
 const MultiSelectFilterManager = (props: MultiSelectFilterManagerProps) => {
-	const { attribute, label } = props;
+	const { attribute, label, name } = props;
 
 	const { get } = useFetchClient();
 
@@ -35,7 +35,6 @@ const MultiSelectFilterManager = (props: MultiSelectFilterManagerProps) => {
 	let publishedOnly = attribute.options?.publishedOnly;
 	let queryLimit = attribute.options?.queryLimit;
 	let displayName = label;
-	let tag = attribute.options?.tag;
 	let customFieldName = attribute.customField;
 
 	useEffect(() => {
@@ -67,12 +66,15 @@ const MultiSelectFilterManager = (props: MultiSelectFilterManagerProps) => {
 	if (queryLimit === undefined)
 		queryLimit = settings?.defaultQueryLimit;
 
-	if (publishedOnly === undefined || entityUid === undefined || tag === undefined)
+	if (publishedOnly === undefined || entityUid === undefined)
 		return;
 
+	const tagItems = name.split(".");
+	const tag = tagItems[tagItems.length - 1];
+
 	return (
-		<MultiSelectFilter customFieldName={customFieldName} displayName={displayName} apiEndpoint={apiEndpoint} entityUid={entityUid}
-			publishedOnly={publishedOnly} queryLimit={queryLimit} tag={tag}
+		<MultiSelectFilter customFieldName={customFieldName} displayName={displayName} tag={tag} apiEndpoint={apiEndpoint} entityUid={entityUid}
+			publishedOnly={publishedOnly} queryLimit={queryLimit}
 		/>
 	);
 }

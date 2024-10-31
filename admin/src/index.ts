@@ -46,30 +46,6 @@ export const register = async (app: any) => {
 				},
 			},
 			options: {
-				base: [
-					{
-						sectionTitle: null,
-						items: [
-							{
-								name: "options.tag",
-								type: "text",
-								intlLabel: {
-									id: getTrad("plugin.custom-field.advanced.tag.label"),
-									defaultMessage: "Tag",
-								},
-								description: {
-									id: getTrad("plugin.custom-field.advanced.tag.description"),
-									defaultMessage: "Tag associated with the Multi Select Dropdown",
-								},
-								placeholder: {
-									id: getTrad("plugin.custom-field.advanced.tag.placeholder"),
-									defaultMessage: 'A tag like LEFT_ARTICLES',
-								},
-								defaultValue: '',
-							},
-						],
-					},
-				],
 				advanced: [
 					{
 						sectionTitle: {

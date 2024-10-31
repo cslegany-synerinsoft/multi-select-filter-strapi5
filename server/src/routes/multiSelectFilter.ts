@@ -25,7 +25,7 @@ export default {
     },
     {
       method: 'GET',
-      path: '/items/:tag',
+      path: '/items/:tag/:status',
       handler: 'multiSelectFilter.itemsByTag',
       config: {
         policies: [],

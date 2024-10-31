@@ -1,5 +1,5 @@
 import type { Core } from '@strapi/strapi';
-import { DocumentResponse, GetDocumentsByTagResult, GetItemsByTagResult, MultiSelectItem, MultiSelectItemCreateRequest, MultiSelectItemId, OrderedDocumentResponse, PluginQueryResponse, PluginSettingsResponse } from '../../../typings';
+import { DocumentResponse, GetDocumentsByTagResult, GetItemsByTagResult, HighlightSettings, MultiSelectItem, MultiSelectItemCreateRequest, MultiSelectItemId, OrderedDocumentResponse, PluginQueryResponse, PluginSettingsResponse } from '../../../typings';
 
 type Settings = {
   mainField: string;
@@ -247,7 +247,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
     }));
   },
 
-  async getItemsByTag(tag: string) {
+  async getItemsByTag(tag: string, status: 'draft' | 'published') {
     const pluginId = "plugin::multi-select-filter.multiselect";
 
     let res: GetItemsByTagResult = {
@@ -266,7 +266,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
           }
         },
         sort: `order:asc`,
-        status: 'draft',
+        status,
       })) as any as MultiSelectItem[];
 
       //map MultiSelectItems by ref_uid (i.e. by api::article.article, api::author.author etc.)

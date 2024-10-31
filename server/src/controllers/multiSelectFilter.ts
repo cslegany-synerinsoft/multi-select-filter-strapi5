@@ -28,14 +28,17 @@ export default ({ strapi }: { strapi: Core.Strapi }) => ({
   },
 
   async itemsByTag(ctx) {
-    
     if(!ctx.params.tag) {
       ctx.throw(400, 'tag is required');
     }
 
+    if(!ctx.params.status) {
+      ctx.throw(400, 'status is required');
+    }
+
     const multiSelectFilter = strapi.plugin("multi-select-filter").service("multiSelectFilter");
 
-    const items = await multiSelectFilter.getItemsByTag(ctx.params.tag);
+    const items = await multiSelectFilter.getItemsByTag(ctx.params.tag, ctx.params.status);
       ctx.type = 'application/json; charset=utf-8';
       ctx.send(items);
   },

@@ -8,10 +8,11 @@ type CustomItemProps = {
 	isOpacityEnabled?: boolean;
 	isDragging?: boolean;
 	onRemoveItem: (item: MultiSelectItem) => void;
+	disabled: boolean;
 } & HTMLAttributes<HTMLDivElement>
 
 const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
-	({ item, isOpacityEnabled, isDragging, style, onRemoveItem, ...props }, ref) => {
+	({ item, isOpacityEnabled, isDragging, style, onRemoveItem, disabled, ...props }, ref) => {
 		const styles: CSSProperties = {
 			opacity: isOpacityEnabled ? "0.4" : "1",
 			cursor: isDragging ? "grabbing" : "grab",
@@ -48,7 +49,7 @@ const CustomItem = forwardRef<HTMLDivElement, CustomItemProps>(
 								</Typography>
 							</Flex>
 							<Box paddingRight={1} paddingLeft={2}>
-								<IconButton withTooltip={false} variant="secondary" onClick={() => onRemoveItem(item)}>
+								<IconButton disabled={disabled} withTooltip={false} variant="secondary" onClick={() => onRemoveItem(item)}>
 									<Trash />
 								</IconButton>
 							</Box>
