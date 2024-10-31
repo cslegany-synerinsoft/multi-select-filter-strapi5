@@ -17,6 +17,7 @@ const createDefaultConfig = async () => {
         defaultApiEndpoint: "",
         defaultPublishedOnly: false,
         defaultQueryLimit: 50,
+        updateFieldName: "featured_news_info",
     };
     await pluginStore.set({ key: 'settings', value });
     return pluginStore.get({ key: 'settings' });

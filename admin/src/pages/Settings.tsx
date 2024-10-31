@@ -171,6 +171,19 @@ const Settings = () => {
 									</Field.Root>
 								</Box>
 							</Grid.Item>
+							<Grid.Item col={6} s={12}>
+								<Box padding={2} style={{ width: "100%" }}>
+									<Field.Root name="field_updateFieldName">
+										<Field.Label>
+											{formatMessage({ id: getTrad('plugin.settings.fields.updateFieldName.label') })}
+										</Field.Label>
+										<SettingsTextField hasTooltip={true}
+											fieldName="updateFieldName" displayName="fields.updateFieldName" placeholder='Field Name'
+											required={false} updateItem={onUpdateSettings} value={settings?.updateFieldName} />
+										<Field.Hint />
+									</Field.Root>
+								</Box>
+							</Grid.Item>
 						</Grid.Root>
 					</>
 				)}

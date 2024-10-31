@@ -19,6 +19,8 @@
 	"plugin.settings.fields.defaultPublishedOnly.label": "Show only Published Items",
 	"plugin.settings.fields.defaultQueryLimit.label": "Query Limit",
 	"plugin.settings.fields.defaultQueryLimit.tooltip": "Limit the number of items in the Dropdown",
+	"plugin.settings.fields.updateFieldName.label": "Field Name",
+	"plugin.settings.fields.updateFieldName.tooltip": "Name of the field on the form to be updated",
 	"plugin.settings.errors.required": "Required Field",
 	"plugin.settings.updated": "Settings successfully updated",
 	"plugin.custom-field.advanced.entityUid.label": "Entity Uid",

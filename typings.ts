@@ -3,6 +3,7 @@ export interface PluginSettingsResponse {
     defaultApiEndpoint: string;
     defaultPublishedOnly: boolean;
     defaultQueryLimit?: number;
+    updateFieldName?: string;
 }
 
 export interface PluginQueryRequestBody {

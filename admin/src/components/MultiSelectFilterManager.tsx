@@ -36,6 +36,7 @@ const MultiSelectFilterManager = (props: MultiSelectFilterManagerProps) => {
 	let queryLimit = attribute.options?.queryLimit;
 	let displayName = label;
 	let customFieldName = attribute.customField;
+	let updateFieldName = undefined;
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -65,6 +66,8 @@ const MultiSelectFilterManager = (props: MultiSelectFilterManagerProps) => {
 		publishedOnly = settings?.defaultPublishedOnly ?? false;
 	if (queryLimit === undefined)
 		queryLimit = settings?.defaultQueryLimit;
+	if(updateFieldName === undefined)
+		updateFieldName = settings?.updateFieldName;
 
 	if (publishedOnly === undefined || entityUid === undefined)
 		return;
@@ -74,7 +77,7 @@ const MultiSelectFilterManager = (props: MultiSelectFilterManagerProps) => {
 
 	return (
 		<MultiSelectFilter customFieldName={customFieldName} displayName={displayName} tag={tag} apiEndpoint={apiEndpoint} entityUid={entityUid}
-			publishedOnly={publishedOnly} queryLimit={queryLimit}
+			publishedOnly={publishedOnly} updateFieldName={updateFieldName} queryLimit={queryLimit}
 		/>
 	);
 }

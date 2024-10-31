@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useFetchClient } from "@strapi/strapi/admin";
 import { useDebounce } from "use-debounce";
-import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom"; //In react-router-dom v6 useHistory() is replaced by useNavigate().
+import { useSearchParams } from "react-router-dom"; //In react-router-dom v6 useHistory() is replaced by useNavigate().
 
-import { ApiEndpointRequestBody, PluginQueryRequestBody, PluginQueryResponse, PluginSettingsResponse } from "../../../typings";
+import { ApiEndpointRequestBody, PluginQueryRequestBody, PluginQueryResponse } from "../../../typings";
 import MultiSelectList from "./MultiSelectList";
 
 interface MultiSelectFilterProps {
 	entityUid: string;
 	apiEndpoint?: string;
 	publishedOnly: boolean;
+	updateFieldName?: string;
 	queryLimit?: number;
 	displayName: string;
 	customFieldName: string;
@@ -17,10 +18,9 @@ interface MultiSelectFilterProps {
 }
 
 const MultiSelectFilter = (props: MultiSelectFilterProps) => {
-	const { apiEndpoint, customFieldName, entityUid, publishedOnly, queryLimit, displayName, tag } = props;
+	const { apiEndpoint, customFieldName, entityUid, publishedOnly, updateFieldName, queryLimit, displayName, tag } = props;
 
 	const { post } = useFetchClient();
-	const { pathname } = useLocation();
 	const [searchParams] = useSearchParams();
 
 	const [queryResponse, setQueryResponse] = useState<PluginQueryResponse>({
@@ -170,7 +170,7 @@ const MultiSelectFilter = (props: MultiSelectFilterProps) => {
 	return (
 		<>
 			<MultiSelectList displayName={displayName} customFieldName={customFieldName} tag={tag} entityUid={entityUid} disabled={status === "published"}
-				filter={filter} publishedOnly={publishedOnly} setFilter={setFilter}
+				filter={filter} publishedOnly={publishedOnly} updateFieldName={updateFieldName} setFilter={setFilter}
 				queryResponse={queryResponse} onSelectReachEnd={onSelectReachEnd} />
 		</>
 	);

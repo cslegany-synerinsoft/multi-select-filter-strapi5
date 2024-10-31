@@ -28,12 +28,13 @@ interface MultiSelectListProps {
 	setFilter: (filter: string) => void;
 	onSelectReachEnd: () => void;
 	publishedOnly: boolean;
+	updateFieldName?: string;
 	entityUid: string;
 	disabled: boolean;
 }
 
 const MultiSelectList = (props: MultiSelectListProps) => {
-	const { displayName, customFieldName, tag, queryResponse, filter, setFilter, onSelectReachEnd, publishedOnly, entityUid, disabled } = props;
+	const { displayName, customFieldName, tag, queryResponse, filter, setFilter, onSelectReachEnd, publishedOnly, updateFieldName, entityUid, disabled } = props;
 
 	const { get, post } = useFetchClient();
 	const { toggleNotification } = useNotification();
@@ -91,7 +92,8 @@ const MultiSelectList = (props: MultiSelectListProps) => {
 
 		setIsLoading(false);
 
-		onChange('featured_news_info', `Last update: ${moment().format('YYYY-MM-DD HH:mm:ss')}`);
+		if(updateFieldName)
+			onChange(updateFieldName, `Last update: ${moment().format('YYYY-MM-DD HH:mm:ss')}`);
 	}
 
 	const convertMultiSelectItems = (multiSelectItems: MultiSelectItem[]) => {
